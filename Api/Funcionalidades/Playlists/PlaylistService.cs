@@ -1,3 +1,4 @@
+using Api.Persistencia;
 using Aplicacion.Dominio;
 
 namespace Api.Funcionalidades.Playlists;
@@ -9,20 +10,15 @@ public interface IPlaylistService
 
 public class PlaylistService : IPlaylistService
 {
+    private readonly AplicacionDbContext context;
 
-    List<Playlist> playlists;
-
-    public PlaylistService()
+    public PlaylistService(AplicacionDbContext context)
     {
-        playlists = new List<Playlist>()
-        {
-            new Playlist("Rock nacional"),
-            new Playlist("Metal")
-        };
+        this.context = context;
     }
 
     public List<Playlist> GetPlaylists()
     {
-        return playlists;
+        return context.Playlists.ToList();
     }
 }

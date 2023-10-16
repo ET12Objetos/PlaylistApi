@@ -1,3 +1,4 @@
+using Api.Persistencia;
 using Aplicacion.Dominio;
 
 namespace Api.Funcionalidades.Songs;
@@ -9,20 +10,15 @@ public interface ISongService
 
 public class SongService : ISongService
 {
-    List<Song> songs;
+    private readonly AplicacionDbContext context;
 
-    public SongService()
+    public SongService(AplicacionDbContext context)
     {
-        songs = new List<Song>()
-        {
-            new Song("Titulo 1", 300),
-            new Song("Titulo 2", 250),
-            new Song("Titulo 3", 200)
-        };
+        this.context = context;
     }
 
     public List<Song> GetSongs()
     {
-        return songs;
+        return context.Songs.ToList();
     }
 }

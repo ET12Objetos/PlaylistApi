@@ -6,8 +6,8 @@ public static class ServiceManager
 {
     public static IServiceCollection AddServiceManager(this IServiceCollection services)
     {
-        services.AddSingleton<ISongService, SongService>();
-        services.AddSingleton<IPlaylistService, PlaylistService>();
+        services.AddScoped<ISongService, SongService>();
+        services.AddScoped<IPlaylistService, PlaylistService>();
 
         return services;
     }
