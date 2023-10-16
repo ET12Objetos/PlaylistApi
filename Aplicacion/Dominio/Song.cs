@@ -17,6 +17,9 @@ public class Song
     [Required]
     public int Duracion { get; set; }
 
+    [ForeignKey("IdPlaylist")]
+    public Playlist? Playlist { get; set; } = null;
+
     public Song(string nombre, int duracion)
     {
         Nombre = nombre;

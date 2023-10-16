@@ -11,14 +11,14 @@ public class SongEndpoints : ICarterModule
             return Results.Ok(songService.GetSongs());
         });
 
-        app.MapPost("/api/song", ([FromServices] ISongService songService, SongDto songDto) =>
+        app.MapPost("/api/song", ([FromServices] ISongService songService, SongCommandDto songDto) =>
         {
             songService.CreateSong(songDto);
 
             return Results.Ok();
         });
 
-        app.MapPut("/api/song/{songId}", ([FromServices] ISongService songService, Guid songId, SongDto songDto) =>
+        app.MapPut("/api/song/{songId}", ([FromServices] ISongService songService, Guid songId, SongCommandDto songDto) =>
         {
             songService.UpdateSong(songId, songDto);
 

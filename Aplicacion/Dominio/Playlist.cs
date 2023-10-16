@@ -20,4 +20,8 @@ public class Playlist
     {
         Nombre = nombre;
     }
+
+    public void AgregarCancion(Song song) => Songs.Add(song);
+
+    public void BorrarCancion(Song song) => Songs.Remove(song);
 }

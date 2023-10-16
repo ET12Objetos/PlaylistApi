@@ -5,10 +5,10 @@ namespace Api.Funcionalidades.Songs;
 
 public interface ISongService
 {
-    void CreateSong(SongDto songDto);
+    void CreateSong(SongCommandDto songDto);
     void DeleteSong(Guid songId);
-    List<Song> GetSongs();
-    void UpdateSong(Guid songId, SongDto songDto);
+    List<SongQueryDto> GetSongs();
+    void UpdateSong(Guid songId, SongCommandDto songDto);
 }
 
 public class SongService : ISongService
@@ -20,7 +20,7 @@ public class SongService : ISongService
         this.context = context;
     }
 
-    public void CreateSong(SongDto songDto)
+    public void CreateSong(SongCommandDto songDto)
     {
         context.Songs.Add(new Song(songDto.Nombre, songDto.Duracion));
 
@@ -38,12 +38,12 @@ public class SongService : ISongService
         }
     }
 
-    public List<Song> GetSongs()
+    public List<SongQueryDto> GetSongs()
     {
-        return context.Songs.ToList();
+        return context.Songs.Select(x => new SongQueryDto { Id = x.Id, Nombre = x.Nombre, Duracion = x.Duracion }).ToList();
     }
 
-    public void UpdateSong(Guid songId, SongDto songDto)
+    public void UpdateSong(Guid songId, SongCommandDto songDto)
     {
         var song = context.Songs.FirstOrDefault(x => x.Id == songId);
 

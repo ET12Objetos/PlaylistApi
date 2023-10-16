@@ -1,14 +1,18 @@
+using Api.Funcionalidades.Songs;
 using Api.Persistencia;
 using Aplicacion.Dominio;
+using Microsoft.EntityFrameworkCore;
 
 namespace Api.Funcionalidades.Playlists;
 
 public interface IPlaylistService
 {
-    void CreateSong(PlaylistDto playlistDto);
+    void AddSongToPlaylist(Guid songId, Guid playlistId);
+    void CreateSong(PlaylistCommandDto playlistDto);
     void DeleteSong(Guid playlistId);
-    List<Playlist> GetPlaylists();
-    void UpdateSong(Guid playlistId, PlaylistDto playlistDto);
+    void RemoveSongFromPlaylist(Guid songId, Guid playlistId);
+    List<PlaylistQueryDto> GetPlaylists();
+    void UpdateSong(Guid playlistId, PlaylistCommandDto playlistDto);
 }
 
 public class PlaylistService : IPlaylistService
@@ -20,7 +24,21 @@ public class PlaylistService : IPlaylistService
         this.context = context;
     }
 
-    public void CreateSong(PlaylistDto playlistDto)
+    public void AddSongToPlaylist(Guid songId, Guid playlistId)
+    {
+        var song = context.Songs.FirstOrDefault(x => x.Id == songId);
+
+        var playlist = context.Playlists.FirstOrDefault(x => x.Id == playlistId);
+
+        if (song != null && playlist != null)
+        {
+            playlist.AgregarCancion(song);
+
+            context.SaveChanges();
+        }
+    }
+
+    public void CreateSong(PlaylistCommandDto playlistDto)
     {
         context.Playlists.Add(new Playlist(playlistDto.Nombre));
 
@@ -38,12 +56,33 @@ public class PlaylistService : IPlaylistService
         }
     }
 
-    public List<Playlist> GetPlaylists()
+    public void RemoveSongFromPlaylist(Guid songId, Guid playlistId)
     {
-        return context.Playlists.ToList();
+        var song = context.Songs.FirstOrDefault(x => x.Id == songId);
+
+        var playlist = context.Playlists.FirstOrDefault(x => x.Id == playlistId);
+
+        if (song != null && playlist != null)
+        {
+            playlist.BorrarCancion(song);
+
+            context.SaveChanges();
+        }
     }
 
-    public void UpdateSong(Guid playlistId, PlaylistDto playlistDto)
+    public List<PlaylistQueryDto> GetPlaylists()
+    {
+        return context.Playlists
+            .Include(x => x.Songs)
+            .Select(x => new PlaylistQueryDto
+            {
+                Id = x.Id,
+                Nombre = x.Nombre,
+                Songs = x.Songs.Select(y => new SongQueryDto { Id = y.Id, Nombre = y.Nombre, Duracion = y.Duracion }).ToList()
+            }).ToList();
+    }
+
+    public void UpdateSong(Guid playlistId, PlaylistCommandDto playlistDto)
     {
         var playlist = context.Playlists.FirstOrDefault(x => x.Id == playlistId);
 
